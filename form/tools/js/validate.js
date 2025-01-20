@@ -1,89 +1,55 @@
-const form1 = document.querySelector(".form-validation");
-const firstName = document.querySelector(".input-name");
-const secondName = document.querySelector(".input-second-name");
-const email = document.querySelector(".input-email");
-const address = document.querySelector(".addressInput");
-const password = document.querySelector(".input-password");
-const conformPassword = document.querySelector(".conform-password");
-console.log(conformPassword);
-const button = document.querySelector("button");
-console.log(button);
+const apikey = "9840996303239d437a15b6646ccb0aa5";
+const apiurl = 'https://api.openweathermap.org/data/2.5/weather?units=metric&q=';
+const searchbox = document.querySelector('.search input');
+const searchButton = document.querySelector('.search button');
+const weather_icon = document.querySelector('.weather-icon12');
+const inputField = document.querySelector(".writingMeanu");
 
-form1.addEventListener("submit", (e) => {
-    console.log("object");
-    e.preventDefault();
-    validation();
+async function checkWeather(city){
+    const response = await fetch(apiurl +city+`&appid=${apikey}`);
+      const data = await response.json();
+      if (response.status == 404){
+           document.querySelector(".error").style.display="block"
+           document.querySelector(".weather").style.display="none";
+
+      }
+      else{
+      document.querySelector('.city').innerHTML=data.name;
+      document.querySelector('.temp').innerHTML= Math.round
+      (data.main.temp) +"°c";
+      document.querySelector('.humidity').innerHTML=data.main.humidity +"%";
+      document.querySelector('.wind').innerHTML=data.wind.speed +" km/h";
+      console.log(data.weather[0].main);
+   
+      if(data.weather[0].main =="Clouds"){
+          weather_icon.src = "./tools/images/cloud.png"
+      } else if(data.weather[0].main =="Clear"){
+        weather_icon.src = "./tools/images/clear.png"
+    } else if(data.weather[0].main =="Rain"){
+        weather_icon.src = "./tools/images/rain.png"
+    }  else if (data.weather[0].main =="Drizzle"){
+      weather_icon.src = "./tools/images/drizzle.png"
+    }  else if (data.weather[0].main =="Mist"){
+      weather_icon.src = "./tools/images/snow.png"
+    }
+
+    document.querySelector(".weather").style.display="block";
+    document.querySelector(".error").style.display="none"
+
+}
+}
+
+searchButton.addEventListener('click',()=>{
+checkWeather(searchbox.value);
 });
 
-let validation = () => {
-    // name
-    let parent = firstName.parentNode;
-    
-    if (firstName.value.trim() === '') {
-        errorHandling(firstName, "The name must not be empty");
-    }else{
-        successShow(firstName);
+inputField.addEventListener("keydown", (event)=>{
+   if (event.key === 'Enter') {
+     checkWeather(searchbox.value);
     }
-    
-    // second name.
-     if(secondName.value.trim() === ""){
-        errorHandling(secondName,"must not be empty");
-     }else{
-        successShow(secondName);
-       
-     }
-    // email
-    if(email.value.trim()===""){
-        errorHandling(email,"must not be empty");
-       
-    }else if(!/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.test(email.value.trim())){
-        errorHandling(email,"write the correct information");
-         
-    } else{
-        successShow(email);
+})
 
-    }
-    // address
-    if(address.value.trim() ===""){
-         errorHandling(address,"you must fill location")
-    }else{
-        successShow(address);
-    }
-    // password
-    if(password.value.trim()===""){
-         errorHandling(password,"write password")
-          
-    }else if (password.value.trim()<5||password.value.trim()>15){
-              errorHandling(password,password.value.trim()<5? "password at list 5 character":"password must be less than 15 character")
-    }else{
-        successShow(password);
-    }
-    // conformPassword
-    if(conformPassword.value.trim() !== password.value.trim()){
-        errorHandling(conformPassword,"password must be the  same");
-    }else if(conformPassword.value.trim() === ""){
-        errorHandling(conformPassword,"")
-    }else{
-        successShow(conformPassword);
-    }
-}
 
-function errorHandling(element, message) {
-    if(element.parentNode.classList.contains("success")){ 
-        element.parentNode.classList.remove("success");
-    }
-    element.parentNode.classList.add("error");
-    addParagraph(message);
-}
 
-function addParagraph(content){
-   let paragraph = document.querySelector(".error p");
-   paragraph.textContent=content;
-}
-function successShow(selector){
-    console.log("abushe");
-    if(selector.parentNode.classList.contains("error")){ 
-        selector.parentNode.classList.remove("error");
-    }
-    selector.parentNode.classList.add("success");
-}
+
+
